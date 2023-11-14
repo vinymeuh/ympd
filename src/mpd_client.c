@@ -25,7 +25,6 @@
 #include <mpd/message.h>
 
 #include "mpd_client.h"
-#include "config.h"
 #include "json_encode.h"
 
 /* forward declaration */

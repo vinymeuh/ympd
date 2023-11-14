@@ -27,7 +27,6 @@
 #include "mongoose.h"
 #include "http_server.h"
 #include "mpd_client.h"
-#include "config.h"
 
 extern char *optarg;
 

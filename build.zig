@@ -17,8 +17,20 @@ pub fn build(b: *std.Build) void {
             "src/json_encode.c",
         },
     });
-    //ympd.addIncludePath(.{ .path = "build" });
+    ympd.defineCMacro("YMPD_VERSION_MAJOR", "1");
+    ympd.defineCMacro("YMPD_VERSION_MINOR", "2");
+    ympd.defineCMacro("YMPD_VERSION_PATCH", "3");
+    ympd.defineCMacro("SRC_PATH", "/home/viny/Work4Me/ZIG/ympd/htdocs");
+    ympd.defineCMacro("WITH_MPD_HOST_CHANGE", "");
     ympd.linkLibC();
     ympd.linkSystemLibrary("mpdclient");
     b.installArtifact(ympd);
+
+    const mkdata = b.addExecutable(.{
+        .name = "mkdata",
+        .target = target,
+    });
+    mkdata.addCSourceFile(.{ .file = .{ .path = "tools/mkdata.c" }, .flags = &.{} });
+    mkdata.linkLibC();
+    b.installArtifact(mkdata);
 }

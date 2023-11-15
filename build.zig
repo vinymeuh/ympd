@@ -1,7 +1,15 @@
 const std = @import("std");
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
+
+    const with_dynamic_assets = b.option(bool, "with_dynamic_assets", "Serve assets dynamically") orelse false;
+
+    var buf: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+    const cwd = try std.os.getcwd(&buf);
+    const allocator = std.heap.page_allocator;
+    var src_path = try allocator.alloc(u8, cwd.len + std.fs.path.sep_str.len + "htdocs".len);
+    _ = try std.fmt.bufPrint(src_path, "{s}{s}htdocs", .{ cwd, std.fs.path.sep_str });
 
     const ympd = b.addExecutable(.{
         .name = "ympd",
@@ -20,7 +28,9 @@ pub fn build(b: *std.Build) void {
     ympd.defineCMacro("YMPD_VERSION_MAJOR", "1");
     ympd.defineCMacro("YMPD_VERSION_MINOR", "2");
     ympd.defineCMacro("YMPD_VERSION_PATCH", "3");
-    ympd.defineCMacro("SRC_PATH", "/home/viny/Work4Me/ZIG/ympd/htdocs");
+    if (with_dynamic_assets == true) {
+        ympd.defineCMacro("SRC_PATH", src_path);
+    }
     ympd.defineCMacro("WITH_MPD_HOST_CHANGE", "");
     ympd.linkLibC();
     ympd.linkSystemLibrary("mpdclient");

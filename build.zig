@@ -62,7 +62,7 @@ pub fn build(b: *std.Build) !void {
         var buf: [std.fs.MAX_PATH_BYTES]u8 = undefined;
         const cwd = try std.os.getcwd(&buf);
         const allocator = std.heap.page_allocator;
-        var src_path = try allocator.alloc(u8, cwd.len + std.fs.path.sep_str.len + "htdocs".len);
+        const src_path = try allocator.alloc(u8, cwd.len + std.fs.path.sep_str.len + "htdocs".len);
         _ = try std.fmt.bufPrint(src_path, "{s}{s}htdocs", .{ cwd, std.fs.path.sep_str });
         ympd.defineCMacro("SRC_PATH", src_path);
     }
